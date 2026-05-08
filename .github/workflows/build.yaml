@@ -29,6 +29,7 @@ jobs:
         with:
           push: true
           platforms: linux/amd64
+          Dockerfile: Dockerfile
           context: upstream-open-design
           cache-from: type=gha
           cache-to: type=gha,mode=max
