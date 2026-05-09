@@ -74,30 +74,25 @@ RUN pnpm --filter @open-design/daemon build && \
 
 FROM ${RUNTIME_IMAGE}
 
-# tini for debian/slim
 RUN apt-get update && apt-get install -y --no-install-recommends \
     tini \
-    && rm -rf /var/lib/apt/lists/* \
-    && groupadd -g 1001 open-design \
-    && useradd -rm -d /home/open-design -s /bin/bash -g root -G sudo -u 1001 open-design
+    && rm -rf /var/lib/apt/lists/*
 
 RUN npm install -g @anthropic-ai/claude-code
 
-RUN chown -R open-design:open-design /home/open-design
-
 WORKDIR /app
 
-COPY --from=build --chown=open-design:open-design /app/deploy/daemon ./apps/daemon
-COPY --from=build --chown=open-design:open-design /app/apps/web/out ./apps/web/out
-COPY --chown=open-design:open-design skills ./skills
-COPY --chown=open-design:open-design design-systems ./design-systems
-COPY --chown=open-design:open-design craft ./craft
-COPY --chown=open-design:open-design prompt-templates ./prompt-templates
-COPY --chown=open-design:open-design assets/frames ./assets/frames
-COPY --chown=open-design:open-design assets/community-pets ./assets/community-pets
+COPY --from=build --chown=node:node /app/deploy/daemon ./apps/daemon
+COPY --from=build --chown=node:node /app/apps/web/out ./apps/web/out
+COPY --chown=node:node skills ./skills
+COPY --chown=node:node design-systems ./design-systems
+COPY --chown=node:node craft ./craft
+COPY --chown=node:node prompt-templates ./prompt-templates
+COPY --chown=node:node assets/frames ./assets/frames
+COPY --chown=node:node assets/community-pets ./assets/community-pets
 
 RUN mkdir -p /app/.od && \
-    chown -R open-design:open-design /app
+    chown -R node:node /app
 
 ENV NODE_ENV=production
 ENV NODE_OPTIONS=--max-old-space-size=192
@@ -106,7 +101,8 @@ ENV OD_PORT=7456
 
 EXPOSE 7456
 
-USER open-design
+RUN usermod -d /home/node node
+USER node
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 CMD ["node", "apps/daemon/dist/cli.js", "--no-open"]

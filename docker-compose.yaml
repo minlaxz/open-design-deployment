@@ -23,7 +23,7 @@ services:
     expose:
       - "7456"
     volumes:
-      - ./opendesign-data:/app/.od
+      - opendesign_data:/app/.od
       - ./.claude:/home/open-design/.claude
       - ./.claude.json:/home/open-design/.claude.json
     read_only: false
@@ -49,3 +49,6 @@ services:
 networks:
   default:
     name: opendesign-net
+
+volumes:
+  opendesign_data:
