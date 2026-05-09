@@ -83,8 +83,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN npm install -g @anthropic-ai/claude-code
 
-RUN mkdir -p /home/open-design/.claude && \
-    chown -R open-design:open-design /home/open-design
+RUN chown -R open-design:open-design /home/open-design
 
 WORKDIR /app
 
